@@ -207,12 +207,11 @@ function tryToMatchValueWithOptionPath(
           .substring(1)
           .split('|')
           .map(el => el.trim())
-          .indexOf(properValue.trim()) === -1
+          .includes(properValue.trim()) === -1
       )
     } else {
       return (
         maybeThat
-          .substring(1)
           .split('|')
           .map(el => el.trim())
           .indexOf(properValue.trim()) > -1

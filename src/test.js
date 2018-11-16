@@ -35,6 +35,18 @@ describe('matchValuesWithCondition', () => {
       )
     ).toBeTruthy())
 
+  it('matches with pipes conditions', () =>
+    expect(
+      matchValuesWithCondition(
+        normalizeCondition({
+          images: 'align-items-center | align-items-start'
+        }),
+        {
+          images: 'align-items-center'
+        }
+      )
+    ).toBeTruthy())
+
   it("doesn't match conditions", () => {
     expect(
       matchValuesWithCondition(

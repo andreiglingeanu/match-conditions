@@ -11,6 +11,8 @@ yarn add match-conditions
 ## Usage
 
 ```javascript
+import { normalizeCondition, matchValuesWithCondition } from 'match-conditions'
+
 // true
 matchValuesWithCondition(
   normalizeCondition({

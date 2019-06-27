@@ -141,6 +141,16 @@ function extractScalarValueFor(singleOptionPath, inferedValuesForContext) {
           value = !!getAsInfered(singleOptionPath) ? 'yes' : 'no'
         }
 
+        if (matcher.indexOf('array-ids:') > -1) {
+          const [_, id, path] = matcher.split(':')
+
+          const properValue = getAsInfered(singleOptionPath).find(
+            v => v.id === id
+          )
+
+          value = opg(path, properValue) || 'no'
+        }
+
         if (matcher.indexOf('json:') > -1) {
           value = getAsInfered(
             `${singleOptionPath}/${matcher.split(':')[1]}`

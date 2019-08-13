@@ -148,7 +148,7 @@ function extractScalarValueFor(singleOptionPath, inferedValuesForContext) {
             v => v.id === id
           )
 
-          value = opg(path, properValue) || 'no'
+          value = !properValue ? 'no' : opg(path, properValue) || 'no'
         }
 
         if (matcher.indexOf('json:') > -1) {

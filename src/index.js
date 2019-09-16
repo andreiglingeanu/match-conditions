@@ -34,6 +34,20 @@ export const opg = (properties, obj, defaultValue) => {
   }
 }
 
+const propertiesWithoutLast = properties => {
+  const delimiter = '/'
+
+  if (typeof properties == 'string') {
+    properties = properties.split(delimiter)
+  }
+
+  if (properties.length > 1) {
+    properties.pop()
+  }
+
+  return properties
+}
+
 export const normalizeCondition = conditionDescriptor => {
   if (!conditionDescriptor.all) {
     if (!conditionDescriptor.any) {
@@ -110,7 +124,8 @@ export const matchValuesWithCondition = (
 }
 
 function extractScalarValueFor(singleOptionPath, inferedValuesForContext) {
-  const getAsInfered = path => opg(path, inferedValuesForContext)
+  const getAsInfered = (path, values = inferedValuesForContext) =>
+    opg(path, values)
 
   if (singleOptionPath.indexOf(':') > -1) {
     /**
@@ -136,6 +151,21 @@ function extractScalarValueFor(singleOptionPath, inferedValuesForContext) {
         // everything else with Vue renderer
 
         matcher = matcher.join(':')
+
+        if (matcher === 'responsive') {
+          value = getAsInfered(singleOptionPath, {
+            ...inferedValuesForContext,
+            [propertiesWithoutLast(singleOptionPath)]:
+              opg(
+                propertiesWithoutLast(singleOptionPath),
+                inferedValuesForContext
+              )[inferedValuesForContext.wp_customizer_current_view] ||
+              opg(
+                propertiesWithoutLast(singleOptionPath),
+                inferedValuesForContext
+              )
+          })
+        }
 
         if (matcher === 'truthy') {
           value = !!getAsInfered(singleOptionPath) ? 'yes' : 'no'

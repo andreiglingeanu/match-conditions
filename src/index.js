@@ -155,15 +155,12 @@ function extractScalarValueFor(singleOptionPath, inferedValuesForContext) {
         if (matcher === 'responsive') {
           value = getAsInfered(singleOptionPath, {
             ...inferedValuesForContext,
-            [propertiesWithoutLast(singleOptionPath)]:
-              opg(
-                propertiesWithoutLast(singleOptionPath),
-                inferedValuesForContext
-              )[inferedValuesForContext.wp_customizer_current_view] ||
-              opg(
-                propertiesWithoutLast(singleOptionPath),
-                inferedValuesForContext
-              )
+            [propertiesWithoutLast(singleOptionPath)]: opg(
+              propertiesWithoutLast(singleOptionPath),
+              inferedValuesForContext
+            )[inferedValuesForContext.wp_customizer_current_view]
+              ? 'yes'
+              : 'no'
           })
         }
 

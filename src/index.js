@@ -152,7 +152,7 @@ function extractScalarValueFor(singleOptionPath, inferedValuesForContext) {
 
         matcher = matcher.join(':')
 
-        if (matcher === 'responsive') {
+        if (matcher === 'visibility') {
           value = getAsInfered(singleOptionPath, {
             ...inferedValuesForContext,
             [propertiesWithoutLast(singleOptionPath)]: opg(
@@ -161,6 +161,22 @@ function extractScalarValueFor(singleOptionPath, inferedValuesForContext) {
             )[inferedValuesForContext.wp_customizer_current_view]
               ? 'yes'
               : 'no'
+          })
+        }
+
+        if (matcher === 'responsive') {
+          value = getAsInfered(singleOptionPath, {
+            ...inferedValuesForContext,
+
+            [propertiesWithoutLast(singleOptionPath)]:
+              opg(
+                propertiesWithoutLast(singleOptionPath),
+                inferedValuesForContext
+              )[inferedValuesForContext.wp_customizer_current_view] ||
+              opg(
+                propertiesWithoutLast(singleOptionPath),
+                inferedValuesForContext
+              )
           })
         }
 

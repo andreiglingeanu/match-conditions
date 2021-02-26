@@ -34,7 +34,7 @@ export const opg = (properties, obj, defaultValue) => {
   }
 }
 
-const propertiesWithoutLast = properties => {
+const propertiesWithoutLast = (properties) => {
   const delimiter = '/'
 
   if (typeof properties == 'string') {
@@ -48,11 +48,11 @@ const propertiesWithoutLast = properties => {
   return properties
 }
 
-export const normalizeCondition = conditionDescriptor => {
+export const normalizeCondition = (conditionDescriptor) => {
   if (!conditionDescriptor.all) {
     if (!conditionDescriptor.any) {
       conditionDescriptor = {
-        all: conditionDescriptor
+        all: conditionDescriptor,
       }
     }
   }
@@ -78,7 +78,7 @@ export const matchValuesWithCondition = (
 ) => {
   let conditionsObject = Object.values(conditionDescriptor)[0]
 
-  const maybeGetMatcher = matcher => {
+  const maybeGetMatcher = (matcher) => {
     if (matcher.indexOf('any') === 0) {
       return 'any'
     }
@@ -100,7 +100,7 @@ export const matchValuesWithCondition = (
       ) {
         return matchValuesWithCondition(
           {
-            [singleOptionPath]: maybeThat
+            [singleOptionPath]: maybeThat,
           },
           inferedValuesForContext
         )
@@ -115,11 +115,11 @@ export const matchValuesWithCondition = (
   )
 
   if (maybeGetMatcher(Object.keys(conditionDescriptor)[0]) === 'all') {
-    return valuesToCheck.every(v => !!v)
+    return valuesToCheck.every((v) => !!v)
   }
 
   if (maybeGetMatcher(Object.keys(conditionDescriptor)[0]) === 'any') {
-    return valuesToCheck.some(v => !!v)
+    return valuesToCheck.some((v) => !!v)
   }
 }
 
@@ -160,7 +160,7 @@ function extractScalarValueFor(singleOptionPath, inferedValuesForContext) {
               inferedValuesForContext
             )[inferedValuesForContext.wp_customizer_current_view]
               ? 'yes'
-              : 'no'
+              : 'no',
           })
         }
 
@@ -176,7 +176,7 @@ function extractScalarValueFor(singleOptionPath, inferedValuesForContext) {
               opg(
                 propertiesWithoutLast(singleOptionPath),
                 inferedValuesForContext
-              )
+              ),
           })
         }
 
@@ -188,7 +188,7 @@ function extractScalarValueFor(singleOptionPath, inferedValuesForContext) {
           const [_, id, path] = matcher.split(':')
 
           const properValue = getAsInfered(singleOptionPath).find(
-            v => v.id === id
+            (v) => v.id === id
           )
 
           value = !properValue ? 'no' : opg(path, properValue) || 'no'
@@ -229,6 +229,10 @@ function extractScalarValueFor(singleOptionPath, inferedValuesForContext) {
 
   if (!properValue) return false
 
+  if (properValue.desktop) {
+    return properValue
+  }
+
   return properValue.toString()
 }
 
@@ -241,6 +245,20 @@ function tryToMatchValueWithOptionPath(
     singleOptionPath,
     inferedValuesForContext
   )
+
+  if (maybeThat.indexOf('~') === 0) {
+    let toMatch = maybeThat.replace('~', '')
+
+    if (properValue.desktop) {
+      return (
+        properValue.desktop === toMatch ||
+        properValue.tablet === toMatch ||
+        properValue.mobile === toMatch
+      )
+    }
+
+    return properValue === toMatch
+  }
 
   properValue = properValue.toString()
   maybeThat = maybeThat.toString()
@@ -259,14 +277,14 @@ function tryToMatchValueWithOptionPath(
         maybeThat
           .substring(1)
           .split('|')
-          .map(el => el.trim())
+          .map((el) => el.trim())
           .includes(properValue.trim()) === -1
       )
     } else {
       return (
         maybeThat
           .split('|')
-          .map(el => el.trim())
+          .map((el) => el.trim())
           .indexOf(properValue.trim()) > -1
       )
     }

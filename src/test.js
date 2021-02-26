@@ -10,15 +10,15 @@ describe('opg', () => {
 describe('normalizeCondition', () => {
   it('keeps already normalized condition object', () =>
     expect(normalizeCondition({ all: { a: '2' } })).toMatchObject({
-      all: { a: '2' }
+      all: { a: '2' },
     }))
   it('keeps already normalized condition object', () =>
     expect(normalizeCondition({ any: { a: '2' } })).toMatchObject({
-      any: { a: '2' }
+      any: { a: '2' },
     }))
   it('normalizes condition object', () =>
     expect(normalizeCondition({ a: '2' })).toMatchObject({
-      all: { a: '2' }
+      all: { a: '2' },
     }))
 })
 
@@ -27,10 +27,10 @@ describe('matchValuesWithCondition', () => {
     expect(
       matchValuesWithCondition(
         normalizeCondition({
-          a: '2'
+          a: '2',
         }),
         {
-          a: '2'
+          a: '2',
         }
       )
     ).toBeTruthy())
@@ -39,10 +39,10 @@ describe('matchValuesWithCondition', () => {
     expect(
       matchValuesWithCondition(
         normalizeCondition({
-          images: 'align-items-center | align-items-start'
+          images: 'align-items-center | align-items-start',
         }),
         {
-          images: 'align-items-center'
+          images: 'align-items-center',
         }
       )
     ).toBeTruthy())
@@ -51,10 +51,10 @@ describe('matchValuesWithCondition', () => {
     expect(
       matchValuesWithCondition(
         normalizeCondition({
-          a: '3'
+          a: '3',
         }),
         {
-          a: '2'
+          a: '2',
         }
       )
     ).toBeFalsy()
@@ -64,10 +64,10 @@ describe('matchValuesWithCondition', () => {
     expect(
       matchValuesWithCondition(
         normalizeCondition({
-          a: '!2'
+          a: '!2',
         }),
         {
-          a: '2'
+          a: '2',
         }
       )
     ).toBeFalsy()
@@ -77,10 +77,10 @@ describe('matchValuesWithCondition', () => {
     expect(
       matchValuesWithCondition(
         normalizeCondition({
-          a: '3 | 2'
+          a: '3 | 2',
         }),
         {
-          a: '2'
+          a: '2',
         }
       )
     ).toBeTruthy()
@@ -92,12 +92,12 @@ describe('matchValuesWithCondition', () => {
         normalizeCondition({
           all: {
             a: '3 | 2',
-            b: 'c'
-          }
+            b: 'c',
+          },
         }),
         {
           a: '2',
-          b: 'a'
+          b: 'a',
         }
       )
     ).toBeFalsy()
@@ -109,12 +109,46 @@ describe('matchValuesWithCondition', () => {
         normalizeCondition({
           any: {
             a: '3 | 2',
-            b: 'c'
-          }
+            b: 'c',
+          },
         }),
         {
           a: '2',
-          b: 'a'
+          b: 'a',
+        }
+      )
+    ).toBeTruthy()
+  })
+
+  it('doesnt match with ~ matcher', () => {
+    expect(
+      matchValuesWithCondition(
+        normalizeCondition({
+          a: '~boxed',
+        }),
+        {
+          a: {
+            desktop: 'wide',
+            tablet: 'wide',
+            mobile: 'wide',
+          },
+        }
+      )
+    ).toBeFalsy()
+  })
+
+  it('matches with ~ matcher', () => {
+    expect(
+      matchValuesWithCondition(
+        normalizeCondition({
+          a: '~boxed',
+        }),
+        {
+          a: {
+            desktop: 'wide',
+            tablet: 'boxed',
+            mobile: 'wide',
+          },
         }
       )
     ).toBeTruthy()

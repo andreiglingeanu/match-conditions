@@ -1,6 +1,6 @@
 {
   "name": "match-conditions",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Match a condition object against a key-value collection using a domain specific syntax.",
   "author": "andreiglingeanu",
   "license": "MIT",

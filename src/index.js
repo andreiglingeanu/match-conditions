@@ -246,7 +246,11 @@ function tryToMatchValueWithOptionPath(
     inferedValuesForContext
   )
 
-  if (maybeThat.indexOf('~') === 0) {
+  if (
+    maybeThat &&
+    maybeThat.toString() &&
+    maybeThat.toString().indexOf('~') === 0
+  ) {
     let toMatch = maybeThat.replace('~', '')
 
     if (properValue.desktop) {

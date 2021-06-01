@@ -79,6 +79,10 @@ export const matchValuesWithCondition = (
   let conditionsObject = Object.values(conditionDescriptor)[0]
 
   const maybeGetMatcher = (matcher) => {
+    if (matcher.length > 4) {
+      return false
+    }
+
     if (matcher.indexOf('any') === 0) {
       return 'any'
     }

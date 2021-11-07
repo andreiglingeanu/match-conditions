@@ -21,7 +21,7 @@ export const opg = (properties, obj, defaultValue) => {
 
   var property = properties.shift()
 
-  if (typeof obj[property] == 'undefined') {
+  if (!obj || typeof obj[property] == 'undefined') {
     return defaultValue
   }
 

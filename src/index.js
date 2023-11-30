@@ -189,7 +189,12 @@ function extractScalarValueFor(singleOptionPath, inferedValuesForContext) {
         }
 
         if (matcher.indexOf('array-ids') > -1) {
-          const [arrayIdsDescriptor, id, path] = matcher.split(':')
+          const [
+            arrayIdsDescriptor,
+            id,
+            path,
+            defaultValue = 'no',
+          ] = matcher.split(':')
 
           let maybeValue =
             arrayIdsDescriptor.indexOf('array-ids-') > -1
@@ -207,7 +212,9 @@ function extractScalarValueFor(singleOptionPath, inferedValuesForContext) {
             })
 
           value =
-            properValue.length === 0 ? 'no' : opg(path, properValue[0]) || 'no'
+            properValue.length === 0
+              ? defaultValue
+              : opg(path, properValue[0]) || 'no'
         }
 
         if (matcher.indexOf('json:') > -1) {

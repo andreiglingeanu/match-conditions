@@ -1,3 +1,5 @@
+import { maybePromoteScalarValueIntoResponsive } from 'customizer-sync-helpers/dist/promote-into-responsive'
+
 /**
  * Get nested property value
  *
@@ -157,12 +159,18 @@ function extractScalarValueFor(singleOptionPath, inferedValuesForContext) {
         matcher = matcher.join(':')
 
         if (matcher === 'visibility') {
-          value = getAsInfered(singleOptionPath, {
-            ...inferedValuesForContext,
-            [propertiesWithoutLast(singleOptionPath)]: opg(
+          const currentVisibilityValue = maybePromoteScalarValueIntoResponsive(
+            opg(
               propertiesWithoutLast(singleOptionPath),
               inferedValuesForContext
-            )[inferedValuesForContext.wp_customizer_current_view]
+            )
+          )
+
+          value = getAsInfered(singleOptionPath, {
+            ...inferedValuesForContext,
+            [propertiesWithoutLast(singleOptionPath)]: currentVisibilityValue[
+              inferedValuesForContext.wp_customizer_current_view
+            ]
               ? 'yes'
               : 'no',
           })

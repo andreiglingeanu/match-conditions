@@ -177,7 +177,9 @@ function extractScalarValueFor(singleOptionPath, inferedValuesForContext) {
 
     let value = null
 
-    const [singleOptionPath, ...matcher] = singleOptionPath.split(':')
+    const [singleOptionPathTmp, ...matcher] = singleOptionPath.split(':')
+
+    singleOptionPath = singleOptionPathTmp
 
     // TODO: start implementing matchers after we are done with
     // everything else with Vue renderer

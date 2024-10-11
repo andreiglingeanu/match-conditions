@@ -130,8 +130,34 @@ export const matchValuesWithCondition = (
 }
 
 function extractScalarValueFor(singleOptionPath, inferedValuesForContext) {
-  const getAsInfered = (path, values = inferedValuesForContext) =>
-    opg(path, values)
+  const getAsInfered = (path, values = inferedValuesForContext) => {
+    const splittedPath = path.split('/')
+
+    const devices = ['desktop', 'tablet', 'mobile']
+
+    // Special case when we dealing with responsive value that needs to be promoted:
+    //
+    // 1. key/desktop
+    // 2. key/tablet
+    // 3. key/mobile
+    //
+    // TODO: maybe support deeper responsive values, if needed
+    if (
+      splittedPath.length === 2 &&
+      devices.includes(splittedPath[1]) &&
+      !Object.keys(values).includes('desktop')
+    ) {
+      return opg(path, {
+        ...values,
+
+        [splittedPath[0]]: maybePromoteScalarValueIntoResponsive(
+          values[splittedPath[0]]
+        ),
+      })
+    }
+
+    return opg(path, values)
+  }
 
   if (singleOptionPath.indexOf(':') > -1) {
     /**
@@ -150,100 +176,88 @@ function extractScalarValueFor(singleOptionPath, inferedValuesForContext) {
      */
 
     let value = null
-    ;((thing, cb) => cb(thing))(
-      singleOptionPath.split(':'),
-      ([singleOptionPath, ...matcher]) => {
-        // TODO: start implementing matchers after we are done with
-        // everything else with Vue renderer
 
-        matcher = matcher.join(':')
+    const [singleOptionPath, ...matcher] = singleOptionPath.split(':')
 
-        if (matcher === 'visibility') {
-          const currentVisibilityValue = maybePromoteScalarValueIntoResponsive(
-            opg(
-              propertiesWithoutLast(singleOptionPath),
-              inferedValuesForContext
-            )
-          )
+    // TODO: start implementing matchers after we are done with
+    // everything else with Vue renderer
 
-          value = getAsInfered(singleOptionPath, {
-            ...inferedValuesForContext,
-            [propertiesWithoutLast(singleOptionPath)]: currentVisibilityValue[
-              inferedValuesForContext.wp_customizer_current_view
-            ]
-              ? 'yes'
-              : 'no',
-          })
-        }
+    matcher = matcher.join(':')
 
-        if (matcher === 'responsive') {
-          value = getAsInfered(singleOptionPath, {
-            ...inferedValuesForContext,
+    if (matcher === 'visibility') {
+      const currentVisibilityValue = maybePromoteScalarValueIntoResponsive(
+        opg(propertiesWithoutLast(singleOptionPath), inferedValuesForContext)
+      )
 
-            [propertiesWithoutLast(singleOptionPath)]:
-              opg(
-                propertiesWithoutLast(singleOptionPath),
-                inferedValuesForContext
-              )[inferedValuesForContext.wp_customizer_current_view] ||
-              opg(
-                propertiesWithoutLast(singleOptionPath),
-                inferedValuesForContext
-              ),
-          })
-        }
+      value = getAsInfered(singleOptionPath, {
+        ...inferedValuesForContext,
+        [propertiesWithoutLast(singleOptionPath)]: currentVisibilityValue[
+          inferedValuesForContext.wp_customizer_current_view
+        ]
+          ? 'yes'
+          : 'no',
+      })
+    }
 
-        if (matcher === 'truthy') {
-          value = !!getAsInfered(singleOptionPath) ? 'yes' : 'no'
-        }
+    if (matcher === 'responsive') {
+      value = getAsInfered(singleOptionPath, {
+        ...inferedValuesForContext,
 
-        if (matcher.indexOf('array-ids') > -1) {
-          const [
-            arrayIdsDescriptor,
-            id,
-            path,
-            defaultValue = 'no',
-          ] = matcher.split(':')
+        [propertiesWithoutLast(singleOptionPath)]:
+          opg(propertiesWithoutLast(singleOptionPath), inferedValuesForContext)[
+            inferedValuesForContext.wp_customizer_current_view
+          ] ||
+          opg(propertiesWithoutLast(singleOptionPath), inferedValuesForContext),
+      })
+    }
 
-          let maybeValue =
-            arrayIdsDescriptor.indexOf('array-ids-') > -1
-              ? arrayIdsDescriptor.split('-')[2]
-              : false
+    if (matcher === 'truthy') {
+      value = !!getAsInfered(singleOptionPath) ? 'yes' : 'no'
+    }
 
-          const properValue = getAsInfered(singleOptionPath)
-            .filter((v) => v.id === id)
-            .filter((v) => {
-              if (maybeValue) {
-                return maybeValue === opg(path, v).toString()
-              }
+    if (matcher.indexOf('array-ids') > -1) {
+      const [arrayIdsDescriptor, id, path, defaultValue = 'no'] = matcher.split(
+        ':'
+      )
 
-              return true
-            })
+      let maybeValue =
+        arrayIdsDescriptor.indexOf('array-ids-') > -1
+          ? arrayIdsDescriptor.split('-')[2]
+          : false
 
-          value =
-            properValue.length === 0
-              ? defaultValue
-              : opg(path, properValue[0]) || 'no'
-        }
+      const properValue = getAsInfered(singleOptionPath)
+        .filter((v) => v.id === id)
+        .filter((v) => {
+          if (maybeValue) {
+            return maybeValue === opg(path, v).toString()
+          }
 
-        if (matcher.indexOf('json:') > -1) {
-          value = getAsInfered(
-            `${singleOptionPath}/${matcher.split(':')[1]}`
-          ).toString()
-        }
+          return true
+        })
 
-        if (matcher === 'array_length') {
-          let properValue = getAsInfered(singleOptionPath)
+      value =
+        properValue.length === 0
+          ? defaultValue
+          : opg(path, properValue[0]) || 'no'
+    }
 
-          value = (properValue || []).length.toString()
-        }
+    if (matcher.indexOf('json:') > -1) {
+      value = getAsInfered(
+        `${singleOptionPath}/${matcher.split(':')[1]}`
+      ).toString()
+    }
 
-        if (!value) {
-          throw new Error(
-            `Unknown matcher received. Please verify for typos. The received matcher: ${matcher}.`
-          )
-        }
-      }
-    )
+    if (matcher === 'array_length') {
+      let properValue = getAsInfered(singleOptionPath)
+
+      value = (properValue || []).length.toString()
+    }
+
+    if (!value) {
+      throw new Error(
+        `Unknown matcher received. Please verify for typos. The received matcher: ${matcher}.`
+      )
+    }
 
     /**
      * Matcher got _matched_.

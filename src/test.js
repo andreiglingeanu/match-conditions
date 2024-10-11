@@ -153,4 +153,19 @@ describe('matchValuesWithCondition', () => {
       )
     ).toBeTruthy()
   })
+
+  it('matches with responsive that was collapsed previously', () => {
+    expect(
+      matchValuesWithCondition(
+        normalizeCondition({
+          'a/desktop': 'wide',
+          'a/tablet': 'wide',
+          'a/mobile': 'wide',
+        }),
+        {
+          a: 'wide',
+        }
+      )
+    ).toBeTruthy()
+  })
 })

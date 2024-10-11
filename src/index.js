@@ -177,7 +177,7 @@ function extractScalarValueFor(singleOptionPath, inferedValuesForContext) {
 
     let value = null
 
-    const [singleOptionPathTmp, ...matcher] = singleOptionPath.split(':')
+    let [singleOptionPathTmp, ...matcher] = singleOptionPath.split(':')
 
     singleOptionPath = singleOptionPathTmp
 

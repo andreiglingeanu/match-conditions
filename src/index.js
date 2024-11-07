@@ -329,7 +329,7 @@ function tryToMatchValueWithOptionPath(
           .substring(1)
           .split('|')
           .map((el) => el.trim())
-          .includes(properValue.trim()) === -1
+          .indexOf(properValue.trim()) === -1
       )
     } else {
       return (

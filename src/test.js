@@ -73,6 +73,19 @@ describe('matchValuesWithCondition', () => {
     ).toBeFalsy()
   })
 
+  it('negates multiple conditions', () => {
+    expect(
+      matchValuesWithCondition(
+        normalizeCondition({
+          a: '! 3 | 2',
+        }),
+        {
+          a: '4',
+        }
+      )
+    ).toBeTruthy()
+  })
+
   it('matches piped conditions', () => {
     expect(
       matchValuesWithCondition(

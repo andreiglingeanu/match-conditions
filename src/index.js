@@ -159,6 +159,7 @@ function extractScalarValueFor(singleOptionPath, inferedValuesForContext) {
     return opg(path, values)
   }
 
+  // TODO: Maybe implement infra for recursive matchers.
   if (singleOptionPath.indexOf(':') > -1) {
     /**
      * Congrats, gentlemans, we are having a custom matcher here
@@ -240,7 +241,7 @@ function extractScalarValueFor(singleOptionPath, inferedValuesForContext) {
       value =
         properValue.length === 0
           ? defaultValue
-          : opg(path, properValue[0]) || 'no'
+          : getAsInfered(path, properValue[0]) || 'no'
     }
 
     if (matcher.indexOf('json:') > -1) {

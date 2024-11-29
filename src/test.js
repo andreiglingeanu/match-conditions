@@ -181,4 +181,23 @@ describe('matchValuesWithCondition', () => {
       )
     ).toBeTruthy()
   })
+
+  it('matches array ids with boolean', () => {
+    expect(
+      matchValuesWithCondition(
+        normalizeCondition({
+          'hero_elements:array-ids:custom_description:description_visibility/desktop':
+            'true',
+        }),
+        {
+          hero_elements: [
+            {
+              id: 'custom_description',
+              description_visibility: true,
+            },
+          ],
+        }
+      )
+    ).toBeTruthy()
+  })
 })

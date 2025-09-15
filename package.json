@@ -19,12 +19,8 @@
     "start": "rollup -c -w",
     "prepare": "yarn run build"
   },
-  "peerDependencies": {
-    "prop-types": "^15.5.4",
-    "react": "^16.6.3",
-    "react-dom": "^16.6.3"
-  },
   "devDependencies": {
+    "prop-types": "^15.5.4",
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.5",
     "babel-plugin-external-helpers": "^6.22.0",
@@ -49,9 +45,7 @@
     "rollup-plugin-postcss": "^1.6.2",
     "rollup-plugin-url": "^1.4.0"
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "dependencies": {
     "customizer-sync-helpers": "^2.0.5"
   }
